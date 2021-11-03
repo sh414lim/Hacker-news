@@ -24,17 +24,15 @@ function newsFead(){ //글 목록 함수
         <div>
         <h1> Hacker News</h1>
         <ul>
-        <li>
-        </li>
+        {{__news_feed__}}
         </ul>
         <div>
-        <a href = "#">다음 페이지</a>
-        <a href = "#">이전 페이지</a>
+        <a href = "#/page/{{__prev_page__}}">다음 페이지</a>
+        <a href = "#"/page/{{__next_page__}}>이전 페이지</a>
         </div>
         </div>
-    `
+    `;
 
-    newsList.push('<ul>');
 
     for(let i =(store.currentPage - 1) * 10; i < store.currentPage * 10; i++){
     newsList.push (`
@@ -45,19 +43,13 @@ function newsFead(){ //글 목록 함수
     </li>`
     );
 }
-newsList.push('<ul/>');
-newsList.push(`
-<div>
- <a href = #/page/${store.currentPage > 1 ? store.currentPage - 1 : 1}>이전 페이지 </a>
- <a href = #/page/${store.currentPage + 1}>다음 페이지 </a>
-</div>
-`)
+
+template = template.replace('{{__news_feed__}}',newsList.join('')); //마킹 된부분 교체
+template = template.replace('{{__prev_page__}}',store.currentPage > 1 ? store.currentPage -1 : 1); //마킹 된부분 교
+template = template.replace('{{__next_page__}}',store.currentPage + 1); //마킹 된부분 교
 //html 하단에 자식 노드로 추가
-container.innerHTML = newsList.join(''); //배열에 있는 문자열을 하나로 만든다 (join)
+container.innerHTML = template; //배열에 있는 문자열을 하나로 만든다 (join)
 }
-
-
-
 
 function newsDetail(){
     //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다

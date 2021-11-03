@@ -140,17 +140,20 @@ function newsFead() {
   //글 목록 함수
   var newsFeed = getDate(NEWS_URL);
   var newsList = [];
-  var template = "\n        <div>\n        <h1> Hacker News</h1>\n        <ul>\n        <li>\n        </li>\n        </ul>\n        <div>\n        <a href = \"#\">\uB2E4\uC74C \uD398\uC774\uC9C0</a>\n        <a href = \"#\">\uC774\uC804 \uD398\uC774\uC9C0</a>\n        </div>\n        </div>\n    ";
-  newsList.push('<ul>');
+  var template = "\n        <div>\n        <h1> Hacker News</h1>\n        <ul>\n        {{__news_feed__}}\n        </ul>\n        <div>\n        <a href = \"#/page/{{__prev_page__}}\">\uB2E4\uC74C \uD398\uC774\uC9C0</a>\n        <a href = \"#\"/page/{{__next_page__}}>\uC774\uC804 \uD398\uC774\uC9C0</a>\n        </div>\n        </div>\n    ";
 
   for (var i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
     newsList.push("\n    <li>\n        <a href = '#/show/".concat(newsFeed[i].id, "'>\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>"));
   }
 
-  newsList.push('<ul/>');
-  newsList.push("\n<div>\n <a href = #/page/".concat(store.currentPage > 1 ? store.currentPage - 1 : 1, ">\uC774\uC804 \uD398\uC774\uC9C0 </a>\n <a href = #/page/").concat(store.currentPage + 1, ">\uB2E4\uC74C \uD398\uC774\uC9C0 </a>\n</div>\n")); //html 하단에 자식 노드로 추가
+  template = template.replace('{{__news_feed__}}', newsList.join('')); //마킹 된부분 교체
 
-  container.innerHTML = newsList.join(''); //배열에 있는 문자열을 하나로 만든다 (join)
+  template = template.replace('{{__prev_page__}}', store.currentPage > 1 ? store.currentPage - 1 : 1); //마킹 된부분 교
+
+  template = template.replace('{{__next_page__}}', store.currentPage + 1); //마킹 된부분 교
+  //html 하단에 자식 노드로 추가
+
+  container.innerHTML = template; //배열에 있는 문자열을 하나로 만든다 (join)
 }
 
 function newsDetail() {
