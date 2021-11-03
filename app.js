@@ -30,26 +30,24 @@ window.addEventListener('hashchange',function(){
 })
 
 for(let i =0; i <10; i++){
+    const div = document.createElement('div')
     const li =document.createElement('li');
     const a=document.createElement('a');
 
-    a.href=`#${newsFeed[i].id}`;
-    a.innerHTML=`${newsFeed[i].title} <b/> coment_count:${newsFeed[i].comments_count}`;
+    div.innerHTML = `
+    <li>
+        <a href = '#'>${newsFeed[i].id}
+        ${newsFeed[i].title} (${newsFeed[i].comments_count})
+        </a>
+    </li>`
 
     
     li.appendChild(a);
-    ul.appendChild(li);
+    ul.appendChild(div.firstElementChild);
 }
 
 //html 하단에 자식 노드로 추가
 container.appendChild(ul);
 container.appendChild(content);
 
-//이벤트
-//json
-//함수
-//객체
-//api
-//컴파일
-//substriong
-//replace 함수 
+

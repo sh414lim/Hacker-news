@@ -144,24 +144,17 @@ window.addEventListener('hashchange', function () {
 });
 
 for (var i = 0; i < 10; i++) {
+  var div = document.createElement('div');
   var li = document.createElement('li');
   var a = document.createElement('a');
-  a.href = "#".concat(newsFeed[i].id);
-  a.innerHTML = "".concat(newsFeed[i].title, " <b/> coment_count:").concat(newsFeed[i].comments_count);
+  div.innerHTML = "\n    <li>\n        <a href = '#'>".concat(newsFeed[i].id, "\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>");
   li.appendChild(a);
-  ul.appendChild(li);
+  ul.appendChild(div.firstElementChild);
 } //html 하단에 자식 노드로 추가
 
 
 container.appendChild(ul);
-container.appendChild(content); //이벤트
-//json
-//함수
-//객체
-//api
-//컴파일
-//substriong
-//replace 함수
+container.appendChild(content);
 },{}],"../../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -190,7 +183,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58065" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61170" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
