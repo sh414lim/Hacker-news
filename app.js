@@ -5,49 +5,49 @@ const content=document.createElement('div')
 const NEWS_URL ='https://api.hnpwa.com/v0/news/1.json';
 const CONTENT_URL='https://api.hnpwa.com/v0/item/@id.json';
 
+function getDate(url){ // ajax 함수
+    ajax.open('GET' ,url,false) //동기적 처리
+    ajax.send();//데이터 가져오기;
+    return JSON.parse(ajax.response);//json 을 객체로
 
-ajax.open('GET' ,NEWS_URL,false) //동기적 처리
-ajax.send();//데이터 가져오기;
+}
 
-const newsFeed=JSON.parse(ajax.response); //json 을 객체로
+
+const newsFeed=getDate(NEWS_URL); 
 const ul =document.createElement('ul');
 
 window.addEventListener('hashchange',function(){
         //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
    const id = location.hash.substr(1);//#제거
 
-    ajax.open('GET',CONTENT_URL.replace('@id',id),false);
-    ajax.send();
-    
-    const newsCotent=JSON.parse(ajax.response);
+    const newsCotent=getDate(CONTENT_URL.replace('@id',id));
     const title = document.createElement('h1');
 
-    title.innerHTML=newsCotent.title;
+    container.innerHTML=`
+        <h1> ${newsCotent.title} <h1/>
+            <div>
+                <a href ="#">목록으로<a/>
+            <div/>
+    `;
 
-    content.appendChild(title);
-    console.log(newsCotent)
 
 })
+    const newsList = [];
+
+    newsList.push('<ul>');
 
 for(let i =0; i <10; i++){
-    const div = document.createElement('div')
-    const li =document.createElement('li');
-    const a=document.createElement('a');
-
-    div.innerHTML = `
+    newsList.push (`
     <li>
-        <a href = '#'>${newsFeed[i].id}
+        <a href = '#${newsFeed[i].id}'>
         ${newsFeed[i].title} (${newsFeed[i].comments_count})
         </a>
-    </li>`
-
+    </li>`)
     
-    li.appendChild(a);
-    ul.appendChild(div.firstElementChild);
 }
 
+newsList.push('<ul/>')
 //html 하단에 자식 노드로 추가
-container.appendChild(ul);
-container.appendChild(content);
+container.innerHTML = newsList.join(''); //배열에 있는 문자열을 하나로 만든다 (join)
 
 

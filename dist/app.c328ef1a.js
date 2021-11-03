@@ -123,38 +123,36 @@ var ajax = new XMLHttpRequest();
 var content = document.createElement('div');
 var NEWS_URL = 'https://api.hnpwa.com/v0/news/1.json';
 var CONTENT_URL = 'https://api.hnpwa.com/v0/item/@id.json';
-ajax.open('GET', NEWS_URL, false); //동기적 처리
 
-ajax.send(); //데이터 가져오기;
+function getDate(url) {
+  // ajax 함수
+  ajax.open('GET', url, false); //동기적 처리
 
-var newsFeed = JSON.parse(ajax.response); //json 을 객체로
+  ajax.send(); //데이터 가져오기;
 
+  return JSON.parse(ajax.response); //json 을 객체로
+}
+
+var newsFeed = getDate(NEWS_URL);
 var ul = document.createElement('ul');
 window.addEventListener('hashchange', function () {
   //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
   var id = location.hash.substr(1); //#제거
 
-  ajax.open('GET', CONTENT_URL.replace('@id', id), false);
-  ajax.send();
-  var newsCotent = JSON.parse(ajax.response);
+  var newsCotent = getDate(CONTENT_URL.replace('@id', id));
   var title = document.createElement('h1');
-  title.innerHTML = newsCotent.title;
-  content.appendChild(title);
-  console.log(newsCotent);
+  container.innerHTML = "\n        <h1> ".concat(newsCotent.title, " <h1/>\n            <div>\n                <a href =\"#\">\uBAA9\uB85D\uC73C\uB85C<a/>\n            <div/>\n    ");
 });
+var newsList = [];
+newsList.push('<ul>');
 
 for (var i = 0; i < 10; i++) {
-  var div = document.createElement('div');
-  var li = document.createElement('li');
-  var a = document.createElement('a');
-  div.innerHTML = "\n    <li>\n        <a href = '#'>".concat(newsFeed[i].id, "\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>");
-  li.appendChild(a);
-  ul.appendChild(div.firstElementChild);
-} //html 하단에 자식 노드로 추가
+  newsList.push("\n    <li>\n        <a href = '#".concat(newsFeed[i].id, "'>\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>"));
+}
 
+newsList.push('<ul/>'); //html 하단에 자식 노드로 추가
 
-container.appendChild(ul);
-container.appendChild(content);
+container.innerHTML = newsList.join(''); //배열에 있는 문자열을 하나로 만든다 (join)
 },{}],"../../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -183,7 +181,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61170" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50993" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
