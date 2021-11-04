@@ -56,15 +56,26 @@ if(newsFeed.length === 0){
 }
 
     for(let i =(store.currentPage - 1) * 10; i < store.currentPage * 10; i++){
-    newsList.push (`
-    <li>
-        <a href = "#/show/${newsFeed[i].id}">
-        ${newsFeed[i].title} (${newsFeed[i].comments_count})
-        </a>
-    </li>
-    `
-    );
-}
+        newsList.push(`
+        <div class="p-6 bg-white mt-6 rounded-lg shadow-md transition-colors duration-500 hover:bg-green-100">
+          <div class="flex">
+            <div class="flex-auto">
+              <a href="#/show/${newsFeed[i].id}">${newsFeed[i].title}</a>  
+            </div>
+            <div class="text-center text-sm">
+              <div class="w-10 text-white bg-green-300 rounded-lg px-0 py-2">${newsFeed[i].comments_count}</div>
+            </div>
+          </div>
+          <div class="flex mt-3">
+            <div class="grid grid-cols-3 text-sm text-gray-500">
+              <div><i class="fas fa-user mr-1"></i>${newsFeed[i].user}</div>
+              <div><i class="fas fa-heart mr-1"></i>${newsFeed[i].points}</div>
+              <div><i class="far fa-clock mr-1"></i>${newsFeed[i].time_ago}</div>
+            </div>  
+          </div>
+        </div>    
+      `);
+    }
 
 template = template.replace('{{__news_feed__}}',newsList.join('')); //마킹 된부분 교체
 template = template.replace('{{__prev_page__}}',store.currentPage > 1 ? store.currentPage -1 : 1); //마킹 된부분 교
@@ -76,10 +87,10 @@ container.innerHTML = template; //배열에 있는 문자열을 하나로 만든
 function newsDetail(){
     //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
 const id = location.hash.substr(7);//#제거
-const newsCotent=getDate(CONTENT_URL.replace('@id',id))
+const newsContent=getDate(CONTENT_URL.replace('@id',id))
 
 container.innerHTML=`
-    <h1> ${newsCotent.title} </h1>
+    <h1> ${newsContent.title} </h1>
         <div>
             <a href ="#/page/${store.currentPage}">목록으로</a>
         </div>
@@ -89,7 +100,7 @@ function router(){
     const routePath = location.hash;
     if(routePath === ''){
         newsFeed();
-    }else if(routePath.indexOf('#/page/' >= 0)){
+    }else if(routePath.indexOf('#/page/') >= 0){
         store.currentPage =Number(routePath.substr(7));
         newsFeed();
     }else{
