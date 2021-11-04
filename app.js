@@ -6,6 +6,7 @@ const NEWS_URL ='https://api.hnpwa.com/v0/news/1.json';
 const CONTENT_URL='https://api.hnpwa.com/v0/item/@id.json';
 const store={
     currentPage:1,
+    feeds:[],
 }
 
 
@@ -16,31 +17,52 @@ function getDate(url){ // ajax 함수
 
 }
 
+function makeFeeds(feeds){
+    for(let i = 0; i<feeds.length; i++){
+        feeds[i].read =false;
+    }
+    return feeds;
+}
 
-function newsFead(){ //글 목록 함수
-    const newsFeed=getDate(NEWS_URL); 
+function newsFeed(){ //글 목록 함수
+    let newsFeed=store.feeds; 
     const newsList = [];
-    let template = `
-        <div>
-        <h1> Hacker News</h1>
-        <ul>
-        {{__news_feed__}}
-        </ul>
-        <div>
-        <a href = "#/page/{{__prev_page__}}">다음 페이지</a>
-        <a href = "#"/page/{{__next_page__}}>이전 페이지</a>
-        </div>
-        </div>
-    `;
+    let template = 
+ `       <div class = "bg-gray-600 min-h-screen">
+            <div class ="bg-white text-xl">
+                <div class="mx-auto px-4">
+                    <div class ="flex justufy-start">
+                        <h1 class ="font-extrabold">hacker news</h1>
+                    </div>
+                    <div class ="items-center hustify-end">
+                        <a href="#/page/{{__prev_page__}}" class = " text-gray-500">
+                            Previous
+                        </a>
+                        <a href = "#/page/{{__next_page__}}" class ="text-gray-500 ml-4">
+                            Next
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 text-2xl text-gray-700">
+                {{__news_feed__}}
+            </div>
 
+        </div>`
+      
+    ;
+if(newsFeed.length === 0){
+    newsFeed = store.feeds = makeFeeds(getDate(NEWS_URL));
+}
 
     for(let i =(store.currentPage - 1) * 10; i < store.currentPage * 10; i++){
     newsList.push (`
     <li>
-        <a href = '#/show/${newsFeed[i].id}'>
+        <a href = "#/show/${newsFeed[i].id}">
         ${newsFeed[i].title} (${newsFeed[i].comments_count})
         </a>
-    </li>`
+    </li>
+    `
     );
 }
 
@@ -61,15 +83,15 @@ container.innerHTML=`
         <div>
             <a href ="#/page/${store.currentPage}">목록으로</a>
         </div>
-`;
+`; 
 }
 function router(){
     const routePath = location.hash;
     if(routePath === ''){
-        newsFead();
+        newsFeed();
     }else if(routePath.indexOf('#/page/' >= 0)){
         store.currentPage =Number(routePath.substr(7));
-        newsFead();
+        newsFeed();
     }else{
         newsDetail();
 

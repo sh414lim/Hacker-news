@@ -124,7 +124,8 @@ var content = document.createElement('div');
 var NEWS_URL = 'https://api.hnpwa.com/v0/news/1.json';
 var CONTENT_URL = 'https://api.hnpwa.com/v0/item/@id.json';
 var store = {
-  currentPage: 1
+  currentPage: 1,
+  feeds: []
 };
 
 function getDate(url) {
@@ -136,14 +137,26 @@ function getDate(url) {
   return JSON.parse(ajax.response); //json 을 객체로
 }
 
-function newsFead() {
+function makeFeeds(feeds) {
+  for (var i = 0; i < feeds.length; i++) {
+    feeds[i].read = false;
+  }
+
+  return feeds;
+}
+
+function newsFeed() {
   //글 목록 함수
-  var newsFeed = getDate(NEWS_URL);
+  var newsFeed = store.feeds;
   var newsList = [];
-  var template = "\n        <div>\n        <h1> Hacker News</h1>\n        <ul>\n        {{__news_feed__}}\n        </ul>\n        <div>\n        <a href = \"#/page/{{__prev_page__}}\">\uB2E4\uC74C \uD398\uC774\uC9C0</a>\n        <a href = \"#\"/page/{{__next_page__}}>\uC774\uC804 \uD398\uC774\uC9C0</a>\n        </div>\n        </div>\n    ";
+  var template = "       <div class = \"bg-gray-600 min-h-screen\">\n            <div class =\"bg-white text-xl\">\n                <div class=\"mx-auto px-4\">\n                    <div class =\"flex justufy-start\">\n                        <h1 class =\"font-extrabold\">hacker news</h1>\n                    </div>\n                    <div class =\"items-center hustify-end\">\n                        <a href=\"#/page/{{__prev_page__}}\" class = \" text-gray-500\">\n                            Previous\n                        </a>\n                        <a href = \"#/page/{{__next_page__}}\" class =\"text-gray-500 ml-4\">\n                            Next\n                        </a>\n                    </div>\n                </div>\n            </div>\n            <div class=\"p-4 text-2xl text-gray-700\">\n                {{__news_feed__}}\n            </div>\n\n        </div>";
+
+  if (newsFeed.length === 0) {
+    newsFeed = store.feeds = makeFeeds(getDate(NEWS_URL));
+  }
 
   for (var i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
-    newsList.push("\n    <li>\n        <a href = '#/show/".concat(newsFeed[i].id, "'>\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>"));
+    newsList.push("\n    <li>\n        <a href = \"#/show/".concat(newsFeed[i].id, "\">\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n    </li>\n    "));
   }
 
   template = template.replace('{{__news_feed__}}', newsList.join('')); //마킹 된부분 교체
@@ -168,10 +181,10 @@ function router() {
   var routePath = location.hash;
 
   if (routePath === '') {
-    newsFead();
+    newsFeed();
   } else if (routePath.indexOf('#/page/' >= 0)) {
     store.currentPage = Number(routePath.substr(7));
-    newsFead();
+    newsFeed();
   } else {
     newsDetail();
   }
@@ -207,7 +220,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50993" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58432" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
