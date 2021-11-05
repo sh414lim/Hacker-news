@@ -90,12 +90,55 @@ const id = location.hash.substr(7);//#제거
 const newsContent=getDate(CONTENT_URL.replace('@id',id))
 
 container.innerHTML=`
-    <h1> ${newsContent.title} </h1>
-        <div>
-            <a href ="#/page/${store.currentPage}">목록으로</a>
-        </div>
+<div class="bg-gray-600 min-h-screen pb-8">
+<div class="bg-white text-xl">
+  <div class="mx-auto px-4">
+    <div class="flex justify-between items-center py-6">
+      <div class="flex justify-start">
+        <h1 class="font-extrabold">Hacker News</h1>
+      </div>
+      <div class="items-center justify-end">
+        <a href="#/page/${store.currentPage}" class="text-gray-500">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="h-full border rounded-xl bg-white m-6 p-4 ">
+  <h2>${newsContent.title}</h2>
+  <div class="text-gray-400 h-20">
+    ${newsContent.content}
+  </div>
+
+  {{__comments__}}
+
+</div>
+</div>
 `; 
+
+function makeComment(comments,called= 0){ //외부 인자를 받는 코멘트
+    const commentString = [];
+for(let i = 0; i < comments.length; i++){
+    commentString.push(`
+    <div style="padding-left: ${called * 40}px;" class="mt-4">
+          <div class="text-gray-400">
+            <i class="fa fa-sort-up mr-2"></i>
+            <strong>${comments[i].user}</strong> ${comments[i].time_ago}
+          </div>
+          <p class="text-gray-700">${comments[i].content}</p>
+        </div>    
+    `);
+    if(comments[i].comments,length > 0){
+      commentString.push(makeComment(comments[i].comments));//재귀호출
+    }
 }
+return commentString.join('');
+}
+container.innerHTML = template.replace('{{__comments__}}',makeComment(newsContent.comments));
+}
+
 function router(){
     const routePath = location.hash;
     if(routePath === ''){
