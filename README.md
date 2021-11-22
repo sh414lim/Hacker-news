@@ -8,7 +8,7 @@
 #### shift 맨앞에 데이터를 가져온다(변화)
 #### unshift 맨앞에 추가 오른쪽으로 민다
 #### join -> 배열 안에 잇는 문자열을 하나의 문자열로 합친다 -> books.join('')
-
+ ####
 #### books.splite(',') -> 다시 배열로 만든다
 
 #### merge(concat) => onebooks.concat(twobooks) -> 두개의 배열을 합친다 먼저 배열뒤로 합친다
