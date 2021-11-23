@@ -16,5 +16,7 @@
 #### 전개연산자
 ##### const books = [...ondebooks,...twobooks];
 
+#### dom의 문제는 react
+
 
 
