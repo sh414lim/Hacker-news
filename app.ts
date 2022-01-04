@@ -1,12 +1,12 @@
-//타입알리아스
-type Store = {
+//타입인터페이스
+interface Store  {
   currentPage: number;
   feeds: NewsFeed[]; //NeWsFeed 배열안에 들어가는 배열 유형
 };
 
 //인터섹션 -공통 값 모으기
-type News = {
-  id: number;
+interface News  {
+  readonly id: number; // 못 바꾸는 값
   time_ago: string;
   url: string;
   user: string;
@@ -14,18 +14,18 @@ type News = {
   title:string;
 }
 //인터섹션 합쳐짐
-type NewsFeed = News & {
+interface NewsFeed extends  News  {
   comments_count: number;
   read: boolean;
   points: number;
 };
 
-type NewsDetail = News & {
+interface NewsDetail extends News {
   comments_count: number;
   time_ago: string;
   comments:[];
 }
-type NewsComment =  News & {
+interface NewsComment  extends News {
   comments:[];
   level:number;
 }
