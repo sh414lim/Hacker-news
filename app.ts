@@ -1,34 +1,98 @@
-const container=document.getElementById('root')
+//타입알리아스
+type Store = {
+  currentPage: number;
+  feeds: NewsFeed[]; //NeWsFeed 배열안에 들어가는 배열 유형
+};
 
-const ajax = new XMLHttpRequest();
-const content=document.createElement('div')
-const NEWS_URL ='https://api.hnpwa.com/v0/news/1.json';
-const CONTENT_URL='https://api.hnpwa.com/v0/item/@id.json';
-const store={
-    currentPage:1,
-    feeds:[],
+//인터섹션 -공통 값 모으기
+type News = {
+  id: number;
+  time_ago: string;
+  url: string;
+  user: string;
+  content:string;
+  title:string;
+}
+//인터섹션 합쳐짐
+type NewsFeed = News & {
+  comments_count: number;
+  read: boolean;
+  points: number;
+};
+
+type NewsDetail = News & {
+  comments_count: number;
+  time_ago: string;
+  comments:[];
+}
+type NewsComment =  News & {
+  comments:[];
+  level:number;
+}
+
+const container: HTMLElement | null = document.getElementById("root");
+const ajax: XMLHttpRequest = new XMLHttpRequest();
+
+const content = document.createElement("div");
+const NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
+const CONTENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
+const store: Store = {
+  currentPage: 1,
+  feeds: [],
+};
+//유니온 둘중 하나 일시 
+//재네릭 - 호출 하는 쪽에서 유형을 명시 - 받는 부분에서 유형을 받아서 그대로 getDate 에서 반환유형 사용
+function getDate<AjaxRespons>(url:string):AjaxRespons {
+  // ajax 함수
+  ajax.open("GET", url, false); //동기적 처리
+  ajax.send(); //데이터 가져오기;
+  return JSON.parse(ajax.response); //json 을 객체로
+}
+
+function makeFeeds(feeds:NewsFeed[]):NewsFeed[] {
+  // 타입 추론-> 타입스크립트가 코드의 상황을보고 숫자를 넣고있으니 숫자이겟지 추론
+  for (let i = 0; i < feeds.length; i++) {
+    feeds[i].read = false;
+  }
+  return feeds;
+}
+
+function updateView(html:string):void {
+  if (container != null) {
+    container.innerHTML = template; //배열에 있는 문자열을 하나로 만든다 (join)
+  } else {
+    console.error("최상위 컨테이너 가 없습니다");
+  }
 }
 
 
-function getDate(url){ // ajax 함수
-    ajax.open('GET' ,url,false) //동기적 처리
-    ajax.send();//데이터 가져오기;
-    return JSON.parse(ajax.response);//json 을 객체로
 
-}
-
-function makeFeeds(feeds){
-    for(let i = 0; i<feeds.length; i++){
-        feeds[i].read =false;
+function makeComment(comments:NewsComment[]):string {
+  //외부 인자를 받는 코멘트
+  const commentString = [];
+  for (let i = 0; i < comments.length; i++) {
+  const comment:NewsComment = comments[i];
+    commentString.push(`
+  <div style="padding-left: ${comment.level * 40}px;" class="mt-4">
+        <div class="text-gray-400">
+          <i class="fa fa-sort-up mr-2"></i>
+          <strong>${comment.user}</strong> ${comment.time_ago}
+        </div>
+        <p class="text-gray-700">${comment.content}</p>
+      </div>    
+  `);
+    if ((comment.comments, length > 0)) {
+      commentString.push(makeComment(comment.comments)); //재귀호출
     }
-    return feeds;
+  }
+  return commentString.join("");
 }
 
-function newsFeed(){ //글 목록 함수
-    let newsFeed=store.feeds; 
-    const newsList = [];
-    let template = 
- `       <div class = "bg-gray-600 min-h-screen">
+function newsFeed():void {
+  //글 목록 함수
+  let newsFeed: NewsFeed[] = store.feeds;
+  const newsList = [];
+  let template = `       <div class = "bg-gray-600 min-h-screen">
             <div class ="bg-white text-xl">
                 <div class="mx-auto px-4">
                     <div class ="flex justufy-start">
@@ -48,15 +112,14 @@ function newsFeed(){ //글 목록 함수
                 {{__news_feed__}}
             </div>
 
-        </div>`
-      
-    ;
-if(newsFeed.length === 0){
-    newsFeed = store.feeds = makeFeeds(getDate(NEWS_URL));
-}
+        </div>`;
 
-    for(let i =(store.currentPage - 1) * 10; i < store.currentPage * 10; i++){
-        newsList.push(`
+  if (newsFeed.length === 0) {
+    newsFeed = store.feeds = makeFeeds(getDate<NewsFeed[]>(NEWS_URL));
+  }
+
+  for (let i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
+    newsList.push(`
         <div class="p-6 bg-white mt-6 rounded-lg shadow-md transition-colors duration-500 hover:bg-green-100">
           <div class="flex">
             <div class="flex-auto">
@@ -75,21 +138,25 @@ if(newsFeed.length === 0){
           </div>
         </div>    
       `);
-    }
+  }
 
-template = template.replace('{{__news_feed__}}',newsList.join('')); //마킹 된부분 교체
-template = template.replace('{{__prev_page__}}',store.currentPage > 1 ? store.currentPage -1 : 1); //마킹 된부분 교
-template = template.replace('{{__next_page__}}',store.currentPage + 1); //마킹 된부분 교
-//html 하단에 자식 노드로 추가
-container.innerHTML = template; //배열에 있는 문자열을 하나로 만든다 (join)
+  template = template.replace("{{__news_feed__}}", newsList.join("")); //마킹 된부분 교체
+  template = template.replace(
+    "{{__prev_page__}}",
+   String( store.currentPage > 1 ? store.currentPage - 1 : 1) //숫자유형을 문자 유형으로
+  ); //마킹 된부분 교
+  template = template.replace("{{__next_page__}}", String(store.currentPage + 1)); //마킹 된부분 교
+  //html 하단에 자식 노드로 추가
+
+  updateView(template);
 }
 
-function newsDetail(){
-    //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
-const id = location.hash.substr(7);//#제거
-const newsContent=getDate(CONTENT_URL.replace('@id',id))
+function newsDetail():void {
+  //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
+  const id = location.hash.substr(7); //#제거
+  const newsContent = getDate<NewsDetail>(CONTENT_URL.replace("@id", id));
 
-container.innerHTML=`
+  container.innerHTML = `
 <div class="bg-gray-600 min-h-screen pb-8">
 <div class="bg-white text-xl">
   <div class="mx-auto px-4">
@@ -116,42 +183,34 @@ container.innerHTML=`
 
 </div>
 </div>
-`; 
+`;
 
-function makeComment(comments,called= 0){ //외부 인자를 받는 코멘트
-    const commentString = [];
-for(let i = 0; i < comments.length; i++){
-    commentString.push(`
-    <div style="padding-left: ${called * 40}px;" class="mt-4">
-          <div class="text-gray-400">
-            <i class="fa fa-sort-up mr-2"></i>
-            <strong>${comments[i].user}</strong> ${comments[i].time_ago}
-          </div>
-          <p class="text-gray-700">${comments[i].content}</p>
-        </div>    
-    `);
-    if(comments[i].comments,length > 0){
-      commentString.push(makeComment(comments[i].comments));//재귀호출
-    }
-}
-return commentString.join('');
-}
-container.innerHTML = template.replace('{{__comments__}}',makeComment(newsContent.comments));
+
+
+  updateView(template.replace(
+    "{{__comments__}}",
+    makeComment(newsContent.comments));
+  if (container) {
+    //축약형
+    container.innerHTML =
+    );
+  } else {
+    console.error("error");
+  }
 }
 
-function router(){
-    const routePath = location.hash;
-    if(routePath === ''){
-        newsFeed();
-    }else if(routePath.indexOf('#/page/') >= 0){
-        store.currentPage =Number(routePath.substr(7));
-        newsFeed();
-    }else{
-        newsDetail();
-
-    }
+function router():void {
+  const routePath = location.hash;
+  if (routePath === "") {
+    newsFeed();
+  } else if (routePath.indexOf("#/page/") >= 0) {
+    store.currentPage = Number(routePath.substr(7));
+    newsFeed();
+  } else {
+    newsDetail();
+  }
 }
 
-window.addEventListener('hashchange',router)
+window.addEventListener("hashchange", router);
 
 router();

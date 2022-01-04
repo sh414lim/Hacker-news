@@ -6,11 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sh414lim/Hacker-news.git"
-  },
-  "author": "",
+  "repository": "git+https://github.com/sh414lim/Hacker-news.git",
+  "author": "sh414lim <77113306+sh414lim@users.noreply.github.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sh414lim/Hacker-news/issues"
