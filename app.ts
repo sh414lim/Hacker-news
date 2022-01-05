@@ -30,6 +30,40 @@ interface NewsComment  extends News {
   level:number;
 }
 
+///목적을 위한 형식 - 복잡도 유지 단순함을 유지 하는 장점이 생김 
+//코드 베이스가 작을때는 나빠지는 거같지만  코드가 점점 커지고 코드의 장점
+class Api{
+  url:string;
+  ajax:XMLHttpRequest;
+
+  constructor(url:string){
+    //초기화
+    this.url =url  //클래스에 인스턴스 객체 접근 - this
+    this.ajax =ajax  //클래스에 인스턴스 객체 접근 - this
+  }
+
+    // 공통 요소 API 꺼내오기   protected : 클래스의 속성과 메서드를 외부로 제공 x 지시어
+    protected getRequest<AjaxRespons>():AjaxRespons{
+      this.ajax.open("GET", this.url, false); //동기적 처리
+      this.ajax.send(); //데이터 가져오기;
+      return JSON.parse(this.ajax.response); //json 을 객체로
+    }
+}
+
+class NewsFeedApi extends Api {
+  getDate():NewsFeed[] {
+    return this.getRequest<NewsFeed[]>();
+  }
+}
+}
+
+class NewsDetailApi extends Api {
+  getDate():NewsDetail{
+    return this.getRequest<NewsDetail>();
+  }
+}
+
+
 const container: HTMLElement | null = document.getElementById("root");
 const ajax: XMLHttpRequest = new XMLHttpRequest();
 
@@ -42,12 +76,12 @@ const store: Store = {
 };
 //유니온 둘중 하나 일시 
 //재네릭 - 호출 하는 쪽에서 유형을 명시 - 받는 부분에서 유형을 받아서 그대로 getDate 에서 반환유형 사용
-function getDate<AjaxRespons>(url:string):AjaxRespons {
-  // ajax 함수
-  ajax.open("GET", url, false); //동기적 처리
-  ajax.send(); //데이터 가져오기;
-  return JSON.parse(ajax.response); //json 을 객체로
-}
+// function getDate<AjaxRespons>(url:string):AjaxRespons {
+//   // ajax 함수
+//   ajax.open("GET", url, false); //동기적 처리
+//   ajax.send(); //데이터 가져오기;
+//   return JSON.parse(ajax.response); //json 을 객체로
+// }
 
 function makeFeeds(feeds:NewsFeed[]):NewsFeed[] {
   // 타입 추론-> 타입스크립트가 코드의 상황을보고 숫자를 넣고있으니 숫자이겟지 추론
@@ -89,6 +123,8 @@ function makeComment(comments:NewsComment[]):string {
 }
 
 function newsFeed():void {
+  //class 는 인스턴스 생성해야함
+  const api = new NewsFeedApi(NEWS_URL); //생성자로 넘어감
   //글 목록 함수
   let newsFeed: NewsFeed[] = store.feeds;
   const newsList = [];
@@ -114,8 +150,12 @@ function newsFeed():void {
 
         </div>`;
 
+  // if (newsFeed.length === 0) {
+  //   newsFeed = store.feeds = makeFeeds(getDate<NewsFeed[]>(NEWS_URL));
+  // }
   if (newsFeed.length === 0) {
-    newsFeed = store.feeds = makeFeeds(getDate<NewsFeed[]>(NEWS_URL));
+    // newsFeed = store.feeds = makeFeeds(Api.getDate<NewsFeed[]>(NEWS_URL));
+    newsFeed = store.feeds = makeFeeds(api.getDate());
   }
 
   for (let i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
@@ -154,9 +194,10 @@ function newsFeed():void {
 function newsDetail():void {
   //loaction 브라우저가 제공해주는 객체 ->주소와 관련된 다양한 정보를 알 수 있다
   const id = location.hash.substr(7); //#제거
-  const newsContent = getDate<NewsDetail>(CONTENT_URL.replace("@id", id));
+  const api =new NewsDetailApi(CONTENT_URL.replace("@id", id);
+  const newsContent = api.getDate();
 
-  container.innerHTML = `
+  let template = `
 <div class="bg-gray-600 min-h-screen pb-8">
 <div class="bg-white text-xl">
   <div class="mx-auto px-4">
