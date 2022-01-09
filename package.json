@@ -12,5 +12,8 @@
   "bugs": {
     "url": "https://github.com/sh414lim/Hacker-news/issues"
   },
-  "homepage": "https://github.com/sh414lim/Hacker-news#readme"
+  "homepage": "https://github.com/sh414lim/Hacker-news#readme",
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  }
 }
