@@ -113,3 +113,37 @@ export type Tstyle = Color &
   Geometry & {
     tagName: string;
   };
+
+//이름은 문자열 객체
+//value 가 오로지 숫자 유형인 객체 - 키는 문자열 데이터유형은 넘버
+export interface TOnlyNumberValueObject {
+  [key: string]: number;
+}
+
+export type TOnlyBooleanValueObject = {
+  [prop: string]: boolean;
+};
+
+//함수 형
+// ? => 옵셔널
+export interface IGetApi {
+  (url: string, search?: string): Promise<string>; // 인자 ,함수의 리턴값->Promis<string>
+}
+
+export type TGetApi = {
+  (url: string, search?: string): Promise<string>;
+};
+
+//인터페이스는 항상 퍼블릭만 다루고 있다.
+export interface IRext {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface IRectConstructor {
+  //생성자의 스펙을 인터페이스로 묘사
+  new (x: number, y: number, width: number, height: number): IRext; // 반환값은 IRext
+}
