@@ -44,14 +44,72 @@ export interface IUser {
   address?: string;
 }
 
-export type Tuser = {
-  readonly id: number;
-  readonly name: string;
-  email: Email;
-  receiveInfo: boolean;
-  active: YesOrNo;
-};
+// export type Tuser = {
+//   readonly id: number;
+//   readonly name: string;
+//   email: Email;
+//   receiveInfo: boolean;
+//   active: YesOrNo;
+// };
 
 export type Tuser = {
   address?: string;
 };
+
+// 인터페이스는 이름이 중복되면 이런식으로 합쳐지는 효과 - 타입알리아스는 지원하지 않는다.
+export interface IUser {
+  readonly id: number;
+  readonly name: Name; //타입 알리아스에 만든 Name 라는 타입
+  email: string;
+  receiveInfo: boolean;
+  active: YesOrNo;
+  address?: string;
+}
+
+// 상속
+//여러개 의 인터페이스를 하나로 합치기
+//IUser 의 타입 값을 상속 받는다
+
+export interface IUserProfile extends IUser {
+  profileImage: string;
+  github?: string;
+  twitter?: string;
+}
+
+//인터섹션- 타입알리아스
+//타입알리아스 와 인터페이스를 혼용해서 상속(인터셉션) 가능
+export type TUserProfile = IUser & {
+  profileImage: string;
+  github?: string;
+  twitter?: string;
+};
+
+export interface Color {
+  fontColor: string;
+  storkeColor: string;
+  borderColor: string;
+  backgroundColor: string;
+}
+
+export type Display = {
+  display: "none" | "block";
+  visibity: boolean;
+};
+
+export type Geometry = {
+  width: number;
+  height: number;
+  padding: number;
+  margin: number;
+};
+
+//여러 개를 상속
+export interface IStyle extends Color, Display, Geometry {
+  tagName: string;
+}
+
+export type Tstyle = Color &
+  Display &
+  Geometry & {
+    tagName: string;
+  };
