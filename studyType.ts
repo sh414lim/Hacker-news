@@ -44,14 +44,6 @@ export interface IUser {
   address?: string;
 }
 
-// export type Tuser = {
-//   readonly id: number;
-//   readonly name: string;
-//   email: Email;
-//   receiveInfo: boolean;
-//   active: YesOrNo;
-// };
-
 export type Tuser = {
   address?: string;
 };
@@ -147,3 +139,6 @@ export interface IRectConstructor {
   //생성자의 스펙을 인터페이스로 묘사
   new (x: number, y: number, width: number, height: number): IRext; // 반환값은 IRext
 }
+
+//생성자 타입을 인터페이스
+//생성자 상태를
