@@ -36,14 +36,10 @@ class Api{
   url:string;
   ajax:XMLHttpRequest;
 
-  constructor(url:string){
-    //초기화
-    this.url =url  //클래스에 인스턴스 객체 접근 - this
-    this.ajax =ajax  //클래스에 인스턴스 객체 접근 - this
-  }
+  
 
     // 공통 요소 API 꺼내오기   protected : 클래스의 속성과 메서드를 외부로 제공 x 지시어
-    protected getRequest<AjaxRespons>():AjaxRespons{
+     getRequest<AjaxRespons>(url:string):AjaxRespons{
       this.ajax.open("GET", this.url, false); //동기적 처리
       this.ajax.send(); //데이터 가져오기;
       return JSON.parse(this.ajax.response); //json 을 객체로
